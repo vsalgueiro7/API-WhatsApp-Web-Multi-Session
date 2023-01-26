@@ -1,2 +1,4 @@
 /node_modules
 sobre_git.txt
+.env
+/build
