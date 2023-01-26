@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { CidadesController } from '../controllers';
+import { WhatsappController } from '../controllers';
 
 const router = Router();
 
-router.post('/cidades',CidadesController.createValidation, CidadesController.create);
+router.post('/start',WhatsappController.createValidation, WhatsappController.create);
 
 
 export {router};

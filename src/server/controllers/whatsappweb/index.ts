@@ -1,5 +1,5 @@
 import * as create from './create';
 
-export const CidadesController = {
+export const WhatsappController = {
     ...create,
 };
