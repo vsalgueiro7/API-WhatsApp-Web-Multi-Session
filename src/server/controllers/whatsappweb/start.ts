@@ -6,7 +6,7 @@ import path from 'path';
 import axios from 'axios';
 import { Client, MessageMedia, LocalAuth } from "whatsapp-web.js";
 
-let cliente: string[]|any[] = [];
+export let cliente: string[]|any[] = [];
 const SESSION_PATH: string = path.resolve(__dirname, 'sessions');
 
 interface IAcesso {
@@ -20,7 +20,7 @@ export const startValidation = validation((getSchema) => ({
         UrlWebHook: yup.string().required()
     })),
 }));
-
+/*
 interface ISend {
     IdCliente: string | any;
     UrlWebHook: string;
@@ -41,6 +41,7 @@ export const sendValidation = validation((getSchema) => ({
         FileNamePdf: yup.string().notRequired()
     })),
 }));
+*/
 
 const DelSession = async (idCliente: any , SESSION_FILE_PATH: string) : Promise<void> => {
 
@@ -141,6 +142,7 @@ export const start = async (req: Request<{}, {}, IAcesso>, res: Response) => {
 
 };
 
+/*
 export const send = async (req: Request<{}, {}, ISend>, res: Response) => {
     const dados: ISend = {
         IdCliente: req.body.IdCliente,
@@ -208,4 +210,4 @@ export const send = async (req: Request<{}, {}, ISend>, res: Response) => {
         });
     }
 
-};
+};*/
