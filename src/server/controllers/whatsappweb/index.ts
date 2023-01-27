@@ -1,5 +1,6 @@
-import * as create from './create';
+import * as start from './start';
 
 export const WhatsappController = {
-    ...create,
+    ...start
 };
+
