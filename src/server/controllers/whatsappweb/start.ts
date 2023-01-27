@@ -65,7 +65,7 @@ export const start = async (req: Request<{}, {}, IAcesso>, res: Response) => {
             if (Count == 2) {
                 console.log('Desconectado por leitura de QrCode')
                 await DelSession(dados.IdCliente, SESSION_FILE_PATH);
-                await axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, disconnected: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
+                await axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, status: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
                 return false;
             }
             console.log(Count);
@@ -76,14 +76,14 @@ export const start = async (req: Request<{}, {}, IAcesso>, res: Response) => {
             cliente[dados.IdCliente].getState().then((result: any) => {
                 console.log(result);
                 if (result == "CONNECTED") {
-                    axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, ready: result }).then(() => { }).catch((error: any) => { });
+                    axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, status: "CONNECTED" }).then(() => { }).catch((error: any) => { });
                 }
             });
 
         });
 
         cliente[dados.IdCliente].on('loading_screen', (percent: any, message: any) => {
-            axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, loading_screen: message }).then(() => { }).catch((error: any) => { });
+            axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, status: "LOADING" }).then(() => { }).catch((error: any) => { });
             console.log(message)
         });
 
@@ -98,7 +98,7 @@ export const start = async (req: Request<{}, {}, IAcesso>, res: Response) => {
         cliente[dados.IdCliente].on('disconnected', async () => {
             console.log('Desconectado')
             await DelSession(dados.IdCliente, SESSION_FILE_PATH);
-            await axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, disconnected: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
+            await axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, status: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
         });
 
         cliente[dados.IdCliente].initialize();

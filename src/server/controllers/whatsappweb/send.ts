@@ -101,7 +101,7 @@ export const send = async (req: Request<{}, {}, ISend>, res: Response) => {
     } catch (error: any) {
         if (error.message == "Cannot read properties of undefined (reading 'sendMessage')" || error.message == "error is not defined") {
             await DelSession(dados.IdCliente, SESSION_FILE_PATH);
-            axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, disconnected: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
+            axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, status: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
         }
         return res.status(500).json({
             message: 'Mensagem não enviada, Sessão não iniciada',
