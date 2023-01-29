@@ -1,26 +1,28 @@
 # API-WhatsApp-Web-Multi-Session
 
-Este projeto é uma API para acessar o WhatsApp Web simultaneamente em várias sessões com base na biblioteca whatsapp-web.js.
+Este projeto é uma API para acessar o WhatsApp Web simultaneamente em várias sessões com base na biblioteca [whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js/).
 Ele permite enviar e receber mensagens de texto, audio e video para multiplos usuario na mesma api, assim podendo ser hospedada em um servidor e fornecer para varios sistemas ao mesmo tempo. 
 Essa Api é simplificada e organizada de uma maneira facil de se utilizar para um fornecimento rapido de disparo de mensagem e até mesmo para construção de um chatbot.
 
-# Requerimentos
+### 📋 Pré-requisitos
 
 * Node.js >= v18.12.1
 * Navegador compatível com WhatsApp Web
 
-# Instalação
+### 🔧 Instalação
 
 * Clone o repositório
 * Execute o comando npm install para instalar as dependências
 * Inicie o aplicativo com o comando npm start
 * Api de simples uso com duas rotas /start e /send.
 
-# Uso
+## 🚀 Começando
+
 A API estará disponível em http://localhost:3333/. 
 É possível criar várias sessões simultâneas, basta seguir as orientações para autenticação.
 
-Rota /start  
+**Rota /start**  
+
 * Enviar o seu idCliente(string) e urlWebHook(string) para retorno do QrCode e informações.
 * Para melhor Gestão o idCliente deve ser o numero do telefone selecionado no QrCode no formato 55+DD+numero.
 * Deve-se prepar a urlWebHook para receber 4 parametro (meId(string), qrCode(string), status(string), msg(objeto)).
@@ -32,7 +34,8 @@ Rota /start
 
 
 	
-Rota /send
+**Rota /send**
+
 * Envios obrigatorio idCliente(string), urlWebHook(string), number(string), type(string);
 * idCliente e urlWebHook deve-se enviar os mesmo iniciado caso não enviado o mesmo retornar erro de status 500
 * type é o tipo de mensagem sendo eles ( Text, Media e Location);
@@ -42,8 +45,9 @@ Rota /send
 * latitue e longitude de formato number (é obrigatorio caso o type = Location)
 * quotedMessageSerialized utilizado quando mensionar alguma mensagem ( enviado pelo campo '_serialized' no recebimento de mensagem );
 
-Recebimento de mensagens
-* Ao dispara mensagem pela rota /send ou ser notificado na sua urlWebHook o objeto msg será enviado, com a seguinte estrutura.
+**Recebimento de mensagens**
+
+* Ao dispara mensagem pela rota /send ou ser notificado na sua urlWebHook o objeto **msg** será enviado, com a seguinte estrutura.
 - type : string ('chat' || 'image' ||  "audio" || "ptt" || "video" || "document" || location')
 - formMe: boolean (true = enviado por você, false = enviado a você)
 - notifyName: string ( nome do enviante)
@@ -68,3 +72,5 @@ Abaixo o recebimento referente a cada type de mensagem
     - description: string ( texto caso haja)
 
 
+
+⌨️ Desenvolvido por Vitor Salgueiro 
