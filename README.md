@@ -11,10 +11,10 @@ Essa Api é simplificada e organizada de uma maneira facil de se utilizar para u
 
 # Instalação
 
-Clone o repositório
-Execute o comando npm install para instalar as dependências
-Inicie o aplicativo com o comando npm start
-Api de simples uso com duas rotas /start e /send.
+* Clone o repositório
+* Execute o comando npm install para instalar as dependências
+* Inicie o aplicativo com o comando npm start
+* Api de simples uso com duas rotas /start e /send.
 
 # Uso
 A API estará disponível em http://localhost:3333/. 
@@ -55,7 +55,7 @@ Recebimento de mensagens
 - hasQuotedMsg: boolean ( se é uma mensagem mensionada = true)
 Abaixo o recebimento referente a cada type de mensagem 
 * type == 'chat 
-    - body:string ( mensagem em texto )
+    - body: string ( mensagem em texto )
 * type == 'image' ||  "audio" || "ptt" || "video" || "document"
     - body: string ( texto da mida caso haja)
     - mimetype: string (tipo de midia)
