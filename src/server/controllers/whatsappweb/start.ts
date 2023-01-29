@@ -4,20 +4,21 @@ import { validation } from '../../shared/middlewares';
 import fs from 'fs-extra';
 import path from 'path';
 import axios from 'axios';
-import { Client, MessageMedia, LocalAuth } from "whatsapp-web.js";
+import { Client, MessageMedia, LocalAuth, Message } from "whatsapp-web.js";
+import { ReceiveOrFromMeMessages } from '../../shared/services/MessangeTreatment';
 
 export let cliente: string[] | any[] = [];
 const SESSION_PATH: string = path.resolve(__dirname, 'sessions');
 
 interface IAcesso {
-    IdCliente: string | any;
-    UrlWebHook: string;
+    idCliente: string | any;
+    urlWebHook: string;
 }
 
 export const startValidation = validation((getSchema) => ({
     body: getSchema<IAcesso>(yup.object().shape({
-        IdCliente: yup.string().required(),
-        UrlWebHook: yup.string().required()
+        idCliente: yup.string().required(),
+        urlWebHook: yup.string().required()
     })),
 }));
 
@@ -32,27 +33,22 @@ const DelSession = async (idCliente: any, SESSION_FILE_PATH: string): Promise<vo
     cliente[idCliente] = '';
 }
 
-const ReceiveMessages = async (idCliente: string | any, UrlWebHook: string, msg: any): Promise<void> => {
-
-    axios.post(UrlWebHook, { idCliente: idCliente, receive_messages: msg, }).then(() => { }).catch((error: any) => { });
-
-}
 
 export const start = async (req: Request<{}, {}, IAcesso>, res: Response) => {
     let Count: number = 0;
     const dados: IAcesso = {
-        IdCliente: req.body.IdCliente,
-        UrlWebHook: req.body.UrlWebHook,
+        idCliente: req.body.idCliente,
+        urlWebHook: req.body.urlWebHook,
     };
 
-    const SESSION_FILE_PATH = path.resolve(__dirname, `sessions/session-${dados.IdCliente}`);
+    const SESSION_FILE_PATH = path.resolve(__dirname, `sessions/session-${dados.idCliente}`);
 
-    await DelSession(dados.IdCliente, SESSION_FILE_PATH);
+    //await DelSession(dados.idCliente, SESSION_FILE_PATH);
 
     try {
 
-        cliente[dados.IdCliente] = new Client({
-            authStrategy: new LocalAuth({ clientId: dados.IdCliente, dataPath: SESSION_PATH }),
+        cliente[dados.idCliente] = new Client({
+            authStrategy: new LocalAuth({ clientId: dados.idCliente, dataPath: SESSION_PATH }),
             puppeteer: {
                 //  executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' , //para videos windowns
                 //  executablePath: '/usr/bin/google-chrome-stable' , //para videos linux
@@ -60,57 +56,65 @@ export const start = async (req: Request<{}, {}, IAcesso>, res: Response) => {
             }
         });
 
-        cliente[dados.IdCliente].on('qr', async (qr: string) => {
+        /*cliente[dados.idCliente].on('qr', async (qr: string) => {
             Count++;
             if (Count == 2) {
                 console.log('Desconectado por leitura de QrCode')
-                await DelSession(dados.IdCliente, SESSION_FILE_PATH);
-                await axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, status: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
+                await DelSession(dados.idCliente, SESSION_FILE_PATH);
+                await axios.post(dados.urlWebHook, { meId: dados.idCliente, status: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
                 return false;
             }
             console.log(Count);
-            axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, qrCode: qr }).then(() => { }).catch((error: any) => { });
-        });
+            axios.post(dados.urlWebHook, { meId: dados.idCliente, qrCode: qr }).then(() => { }).catch((error: any) => { });
+        });*/
 
-        cliente[dados.IdCliente].on('ready', () => {
-            cliente[dados.IdCliente].getState().then((result: any) => {
+        cliente[dados.idCliente].on('ready', () => {
+            cliente[dados.idCliente].getState().then((result: any) => {
                 console.log(result);
-                if (result == "CONNECTED") {
-                    axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, status: "CONNECTED" }).then(() => { }).catch((error: any) => { });
+                if (result != "CONNECTED") {
+                    axios.post(dados.urlWebHook, { meId: dados.idCliente, status: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
+                    return false;
                 }
+                axios.post(dados.urlWebHook, { meId: dados.idCliente, status: "CONNECTED" }).then(() => { }).catch((error: any) => { });
             });
-
         });
 
-        cliente[dados.IdCliente].on('loading_screen', (percent: any, message: any) => {
-            axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, status: "LOADING" }).then(() => { }).catch((error: any) => { });
+        cliente[dados.idCliente].on('loading_screen', (percent: any, message: any) => {
+            axios.post(dados.urlWebHook, { meId: dados.idCliente, status: "LOADING" }).then(() => { }).catch((error: any) => { });
             console.log(message)
         });
 
-        cliente[dados.IdCliente].on('auth_failure', () => {
+        cliente[dados.idCliente].on('auth_failure', () => {
             console.log('** O erro de autenticação regenera o QRCODE **');
+            axios.post(dados.urlWebHook, { meId: dados.idCliente, status: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
+            return false;
         });
 
-        cliente[dados.IdCliente].on('authenticated', () => {
+        cliente[dados.idCliente].on('authenticated', () => {
             console.log('** Autenticado **');
         });
 
-        cliente[dados.IdCliente].on('disconnected', async () => {
+        cliente[dados.idCliente].on('disconnected', async () => {
             console.log('Desconectado')
-            await DelSession(dados.IdCliente, SESSION_FILE_PATH);
-            await axios.post(dados.UrlWebHook, { idCliente: dados.IdCliente, status: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
+            await DelSession(dados.idCliente, SESSION_FILE_PATH);
+            await axios.post(dados.urlWebHook, { meId: dados.idCliente, status: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
+            return false;
         });
 
-        cliente[dados.IdCliente].initialize();
+        cliente[dados.idCliente].initialize();
 
-        cliente[dados.IdCliente].on('message', async (msg: any) => {
-            await ReceiveMessages(dados.IdCliente, dados.UrlWebHook, msg);
+        cliente[dados.idCliente].on('message', async (msg: Message) => {
+            await ReceiveOrFromMeMessages(dados.idCliente, dados.urlWebHook, msg);
+        });
+
+        cliente[dados.idCliente].on('message_create', async (msg: Message) => {
+            if (msg.id.fromMe)
+                await ReceiveOrFromMeMessages(dados.idCliente, dados.urlWebHook, msg);
         });
 
         return res.status(200).json({
             message: 'Processo Iniciado Com Sucesso',
         });
-
 
     } catch (error) {
         return res.status(500).json({

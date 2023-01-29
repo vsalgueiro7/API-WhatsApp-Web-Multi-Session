@@ -1,7 +1,7 @@
 {
-  "name": "api_whatsapp_web",
+  "name": "api_whatsapp_web_multi-session",
   "version": "1.0.0",
-  "description": "",
+  "description": "API WhatsApp Web Multi-Session",
   "main": "index.js",
   "scripts": {
     "start": "ts-node-dev ./src/index.ts"

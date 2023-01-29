@@ -1,7 +1,8 @@
 # API-WhatsApp-Web-Multi-Session
 
-Este projeto é uma API para acessar o WhatsApp Web simultaneamente em várias sessões.
-Ele permite enviar e receber mensagens de texto, audio e video, além de fornecer informações sobre notificações e status de conexão.
+Este projeto é uma API para acessar o WhatsApp Web simultaneamente em várias sessões com base na biblioteca whatsapp-web.js.
+Ele permite enviar e receber mensagens de texto, audio e video para multiplos usuario na mesma api, assim podendo ser hospedada em um servidor e fornecer para varios sistemas ao mesmo tempo. 
+Essa Api é simplificada e organizada de uma maneira facil de se utilizar para um fornecimento rapido de disparo de mensagem e até mesmo para construção de um chatbot.
 
 # Requerimentos
 
@@ -20,19 +21,50 @@ A API estará disponível em http://localhost:3333/.
 É possível criar várias sessões simultâneas, basta seguir as orientações para autenticação.
 
 Rota /start  
-* Enviar o seu IdCliente(string) e UrlWebHook(string) para retorno do QrCode e informações.
-* Ao ler o QrCode enviado para sua url web hook, deve-se preparar o sistema para receber 3 Parametros de Status LOADING, CONNECTED e DISCONNECTED.
+* Enviar o seu idCliente(string) e urlWebHook(string) para retorno do QrCode e informações.
+* Para melhor Gestão o idCliente deve ser o numero do telefone selecionado no QrCode no formato 55+DD+numero.
+* Deve-se prepar a urlWebHook para receber 4 parametro (meId(string), qrCode(string), status(string), msg(objeto)).
+* Ao requistar a rota /start será retornado meId e qrCode por até 5x ou até que leia-se com o aplicativo do whatsapp.
+* Ao ler o QrCode será enviado novamente para sua urlWebHook os status (LOADING, CONNECTED e DISCONNECTED).
 * LOADING : Ocorre logo após a leitura do QrCode.
 * CONNECTED : Quando estiver totalmente conectado ao WhatsApp Web.
 * DISCONNECTED : Quando desconectado pelo telefone ou quando acontece algo inesperado no servidor.
+
+
 	
 Rota /send
-* Enviar IdCliente(string), UrlWebHook(string), Number(string), Message(string), FileUrl(string) e FileNamePdf(string)
-* IdCliente e UrlWebHook deve-se enviar os mesmo iniciado caso não enviado o mesmo retornar erro 500
-* Number é o numero para quem será enviado a mensagem, Message é a mensagem texto.
-* FileUrl é opcional, é a url do arquivo img,pdf,audio e video no formato ('jpg', 'jpeg', 'png', 'pdf', 'mp3', 'mp4', 'mpeg');
-* FileNamePdf é opcional, é um texto referenciando o nome de um arquivo PDF.
-	
-# Nota
-Este projeto é apenas para fins educacionais e não deve ser utilizado para violar os termos de serviço do WhatsApp.
-O desenvolvimento e uso deste projeto é de responsabilidade exclusiva do usuário.
+* Envios obrigatorio idCliente(string), urlWebHook(string), number(string), type(string);
+* idCliente e urlWebHook deve-se enviar os mesmo iniciado caso não enviado o mesmo retornar erro de status 500
+* type é o tipo de mensagem sendo eles ( Text, Media e Location);
+* message é a mensagem texto (Obrigatorio caso o type = Text).
+* fileUrl é a url do arquivo img,pdf,audio e video no formato ('jpg', 'jpeg', 'png', 'pdf', 'mp3', 'mp4', 'mpeg') e (Obrigatorio caso o type = Media);
+* fileName é opcional, é um texto referenciando o nome de um arquivo PDF.
+* latitue e longitude de formato number (é obrigatorio caso o type = Location)
+* quotedMessageSerialized utilizado quando mensionar alguma mensagem ( enviado pelo campo '_serialized' no recebimento de mensagem );
+
+Recebimento de mensagens
+* Ao dispara mensagem pela rota /send ou ser notificado na sua urlWebHook o objeto msg será enviado, com a seguinte estrutura.
+- type : string ('chat' || 'image' ||  "audio" || "ptt" || "video" || "document" || location')
+- formMe: boolean (true = enviado por você, false = enviado a você)
+- notifyName: string ( nome do enviante)
+- idMenssage: string ( id da mensagem)
+- _serialized: string ( dados para serem enviado caso a mensagem seja mensionar )
+- from: string ( numero de quem recebeu a mensagem)
+- to: string ( numero de quem enviou a mensagem)
+- dateMessage: number ( data e hora em formato Unix timestamp)
+- hasQuotedMsg: boolean ( se é uma mensagem mensionada = true)
+Abaixo o recebimento referente a cada type de mensagem 
+* type == 'chat 
+    - body:string ( mensagem em texto )
+* type == 'image' ||  "audio" || "ptt" || "video" || "document"
+    - body: string ( texto da mida caso haja)
+    - mimetype: string (tipo de midia)
+    - base64: string (midia enviada em base64)
+    - filename: string ( nome do arquivo para document, caso haja)
+* type == 'location'
+    - body: string ( texto da mida caso haja)
+    - latitude: string ( numero latitude com traço de menos (-) caso haja ex: -22.968916913119195)
+    - longitude: string ( numero latitude com traço de menos (-) caso haja ex: -43.18458173013338)
+    - description: string ( texto caso haja)
+
+
