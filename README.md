@@ -1,8 +1,6 @@
 # API-WhatsApp-Web-Multi-Session
 
-Este projeto é uma API para acessar o WhatsApp Web simultaneamente em várias sessões com base na biblioteca [whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js/).
-Ele permite enviar e receber mensagens de texto, audio e video para multiplos usuario na mesma api, assim podendo ser hospedada em um servidor e fornecer para varios sistemas ao mesmo tempo. 
-Essa Api é simplificada e organizada de uma maneira facil de se utilizar para um fornecimento rapido de disparo de mensagem e até mesmo para construção de um chatbot.
+Este projeto é uma API que permite acessar o WhatsApp Web simultaneamente em várias sessões. Ela oferece a capacidade de enviar e receber mensagens de texto, áudio e vídeo para múltiplos usuários, permitindo que seja hospedada em um servidor e fornecida a vários sistemas ao mesmo tempo. Com sua estrutura simplificada e organizada, essa API é fácil de usar e proporciona uma rápida entrega de mensagens, além de ser uma excelente opção para a construção de chatbots.
 
 ### 📋 Pré-requisitos
 
@@ -23,11 +21,11 @@ A API estará disponível em http://localhost:3333/.
 
 **Rota /start**  
 
-* Enviar o seu idCliente(string) e urlWebHook(string) para retorno do QrCode e informações.
-* Para melhor Gestão o idCliente deve ser o numero do telefone selecionado no QrCode no formato 55+DD+numero.
-* Deve-se prepar a urlWebHook para receber 4 parametro (meId(string), qrCode(string), status(string), msg(objeto)).
-* Ao requistar a rota /start será retornado meId e qrCode por até 5x ou até que leia-se com o aplicativo do whatsapp.
-* Ao ler o QrCode será enviado novamente para sua urlWebHook os status (LOADING, CONNECTED e DISCONNECTED).
+* É necessário fornecer o seu idCliente (string) e urlWebHook (string) para retorno do QrCode e informações.
+* Para uma melhor gestão, o idCliente deve ser o número de telefone selecionado no QrCode, no formato 55+DD+numero.
+* A urlWebHook deve estar preparada para receber 4 parâmetros (meId (string), qrCode (string), status (string), msg (objeto)).
+* Ao requisitar a rota /start, serão retornados o meId e o qrCode, até 5 vezes ou até que seja lido com o aplicativo do WhatsApp. .
+* Ao ler o QrCode, será enviado novamente para a urlWebHook os status LOADING, CONNECTED e DISCONNECTED.
 * LOADING : Ocorre logo após a leitura do QrCode.
 * CONNECTED : Quando estiver totalmente conectado ao WhatsApp Web.
 * DISCONNECTED : Quando desconectado pelo telefone ou quando acontece algo inesperado no servidor.
