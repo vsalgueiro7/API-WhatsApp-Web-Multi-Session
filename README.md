@@ -89,6 +89,4 @@ Abaixo o recebimento referente a cada type de mensagem
    
 
 
-#### ⌨️ Desenvolvidor
-
-   * Vitor Salgueiro 
+#### ⌨️ Desenvolvido por Vitor Salgueiro 
