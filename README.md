@@ -34,19 +34,30 @@ A API estará disponível em http://localhost:3333/.
 	
 **Rota /send**
 
-* Envios obrigatorio idCliente(string), urlWebHook(string), number(string), type(string);
-* idCliente e urlWebHook deve-se enviar os mesmo iniciado caso não enviado o mesmo retornar erro de status 500
-* type é o tipo de mensagem sendo eles ( Text, Media e Location);
-* message é a mensagem texto (Obrigatorio caso o type = Text).
-* fileUrl é a url do arquivo img,pdf,audio e video no formato ('jpg', 'jpeg', 'png', 'pdf', 'mp3', 'mp4', 'mpeg') e (Obrigatorio caso o type = Media);
-* fileName é opcional, é um texto referenciando o nome de um arquivo PDF.
-* latitue e longitude de formato number (é obrigatorio caso o type = Location)
+* Campos Padrões 
+    - idCliente(string), urlWebHook(string), number(string), type(string); (idCliente e urlWebHook deve-se enviar os mesmo iniciado na rota /start)
+    - type : string ('Text' || 'Media' || Location' || Buttons)
+* type == 'Text 
+    - message: string
+* type == Media
+    - fileUrl: string ('jpg', 'jpeg', 'png', 'pdf', 'mp3', 'mp4', 'mpeg')
+    - fileName: string (opcional )
+* type == Location
+    - latitue: number
+    - longitude: number
+* type == Buttons
+    - title: string
+    - message: string 
+    - footer: string (opcional)
+    - buttonsArray : array de objeto 
+        - [{body: "string"}, {body: "string"}]
+
 * quotedMessageSerialized utilizado quando mensionar alguma mensagem ( enviado pelo campo '_serialized' no recebimento de mensagem );
 
 **Recebimento de mensagens**
 
 * Ao dispara mensagem pela rota /send ou ser notificado na sua urlWebHook o objeto **msg** será enviado, com a seguinte estrutura.
-- type : string ('chat' || 'image' ||  "audio" || "ptt" || "video" || "document" || location')
+- type : string ('chat' || 'image' ||  "audio" || "ptt" || "video" || "document" || location' || buttons || buttons_response)
 - formMe: boolean (true = enviado por você, false = enviado a você)
 - notifyName: string ( nome do enviante)
 - idMenssage: string ( id da mensagem)
@@ -68,7 +79,14 @@ Abaixo o recebimento referente a cada type de mensagem
     - latitude: string ( numero latitude com traço de menos (-) caso haja ex: -22.968916913119195)
     - longitude: string ( numero latitude com traço de menos (-) caso haja ex: -43.18458173013338)
     - description: string ( texto caso haja)
-
+* type == 'buttons'
+    - body: string ( texto da pergunta )
+    - titulo: string ( titulo da pergunta )
+    - footer: string ( footer da pergunta )
+    - dynamicReplyButtons: array ( array de objeto de botoes )
+* type == 'buttons_response'
+    - body: string ( o texto do botão clicado )
+   
 
 
 ⌨️ Desenvolvido por Vitor Salgueiro 

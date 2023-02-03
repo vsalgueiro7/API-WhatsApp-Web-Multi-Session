@@ -1,14 +1,9 @@
 import axios from 'axios';
 import { Message, MessageId } from "whatsapp-web.js";
-import { join } from "path";
-import { writeFile } from "fs";
-import fs from 'fs-extra';
-import { promisify } from "util";
-
-const writeFileAsync = promisify(writeFile);
 
 interface IMessageData {
-    notifyName?: string
+    notifyName?: string,
+    footer?: string
 }
 
 export interface IMessageId extends MessageId {
@@ -30,12 +25,14 @@ const isValidMsg = (msg: IMessage): boolean => {
         msg.type === "image" ||
         msg.type === "document" ||
        // msg.type === "sticker" || //(figurinha )
-        msg.type === "location"  //Localiczação
+        msg.type === "location" || //Localiczação
         // msg.type === "vcard" || ( anexo de numero de contato)
         // msg.type === "call_log" || ( ligação )
         //  msg.type === "e2e_notification" || // Ignore Empty Messages Generated When Someone Changes His Account from Personal to Business or vice-versa
         // msg.type === "notification_template" || // Ignore Empty Messages Generated When Someone Changes His Account from Personal to Business or vice-versa
-    ) {
+        msg.type === "buttons_response" ||
+        msg.type === "template_button_reply"
+        ) {
         if (!msg.author && // Ignore Group Messages
             !msg.id.participant // Ignore Group Messages
         ) {
@@ -58,11 +55,32 @@ const Treatment = async (msg: IMessage) => {
         from: msg.from,
         to: msg.to,
         dateMessage: msg.timestamp,
-        hasQuotedMsg: msg.hasQuotedMsg
+        hasQuotedMsg: msg.hasQuotedMsg,
+
     };
 
     let newDados: object = {};
-    if (msg.type === 'chat'  ) {
+    //resposta do butao
+    if(msg.type === 'buttons_response'){
+        newDados = {
+            body: msg.body
+        };
+
+    }
+    //botoes
+    if(msg.type === 'chat' && msg.title ){
+        newDados = {
+            type: 'buttons',
+            title: msg.title,
+            body: msg.body,
+            footer: msg._data?.footer,
+            dynamicReplyButtons: msg.dynamicReplyButtons,
+        };
+
+    }
+
+    //mensagem comum
+    if (msg.type === 'chat' && !msg.title ) {
         newDados = {
             body: msg.body
         };
@@ -88,7 +106,7 @@ const Treatment = async (msg: IMessage) => {
     }
 
     return Object.assign(dados, newDados);
-
+   //return Object.assign(msg);
 }
 
 export const ReceiveOrFromMeMessages = async (idCliente: string | any, urlWebHook: string, msg: IMessage): Promise<void> => {

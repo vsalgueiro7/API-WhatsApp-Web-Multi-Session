@@ -43,7 +43,7 @@ export const start = async (req: Request<{}, {}, IAcesso>, res: Response) => {
 
     const SESSION_FILE_PATH = path.resolve(__dirname, `sessions/session-${dados.idCliente}`);
 
-    //await DelSession(dados.idCliente, SESSION_FILE_PATH);
+    await DelSession(dados.idCliente, SESSION_FILE_PATH);
 
     try {
 
@@ -56,7 +56,7 @@ export const start = async (req: Request<{}, {}, IAcesso>, res: Response) => {
             }
         });
 
-        /*cliente[dados.idCliente].on('qr', async (qr: string) => {
+        cliente[dados.idCliente].on('qr', async (qr: string) => {
             Count++;
             if (Count == 2) {
                 console.log('Desconectado por leitura de QrCode')
@@ -65,8 +65,10 @@ export const start = async (req: Request<{}, {}, IAcesso>, res: Response) => {
                 return false;
             }
             console.log(Count);
-            axios.post(dados.urlWebHook, { meId: dados.idCliente, qrCode: qr }).then(() => { }).catch((error: any) => { });
-        });*/
+            axios.post(dados.urlWebHook, { meId: dados.idCliente, qrCode: qr }).then(() => { }).catch(async (error: any) => {
+                await DelSession(dados.idCliente, SESSION_FILE_PATH);
+            });
+        });
 
         cliente[dados.idCliente].on('ready', () => {
             cliente[dados.idCliente].getState().then((result: any) => {
