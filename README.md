@@ -1,4 +1,6 @@
 # API-WhatsApp-Web-Multi-Session
+<img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
+
 
 Este projeto é uma API que permite acessar o WhatsApp Web simultaneamente em várias sessões. Ela oferece a capacidade de enviar e receber mensagens de texto, áudio e vídeo para múltiplos usuários, permitindo que seja hospedada em um servidor e fornecida a vários sistemas ao mesmo tempo. Com sua estrutura simplificada e organizada, essa API é fácil de usar e proporciona uma rápida entrega de mensagens, além de ser uma excelente opção para a construção de chatbots.
 
