@@ -35,6 +35,7 @@ const DelSession = async (idCliente: any, SESSION_FILE_PATH: string): Promise<vo
 
 
 export const start = async (req: Request<{}, {}, IAcesso>, res: Response) => {
+
     let Count: number = 0;
     const dados: IAcesso = {
         idCliente: req.body.idCliente,
@@ -51,21 +52,21 @@ export const start = async (req: Request<{}, {}, IAcesso>, res: Response) => {
             authStrategy: new LocalAuth({ clientId: dados.idCliente, dataPath: SESSION_PATH }),
             puppeteer: {
                 //  executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' , //para videos windowns
-                //  executablePath: '/usr/bin/google-chrome-stable' , //para videos linux
+                //executablePath: '/usr/bin/google-chrome-stable' , //para videos linux
                 args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--single-process', '--disable-gpu'],
             }
         });
 
         cliente[dados.idCliente].on('qr', async (qr: string) => {
             Count++;
-            if (Count == 2) {
+            if (Count == 5) {
                 console.log('Desconectado por leitura de QrCode')
                 await DelSession(dados.idCliente, SESSION_FILE_PATH);
                 await axios.post(dados.urlWebHook, { meId: dados.idCliente, status: 'DISCONNECTED', }).then(() => { }).catch((error: any) => { });
                 return false;
             }
             console.log(Count);
-            axios.post(dados.urlWebHook, { meId: dados.idCliente, qrCode: qr }).then(() => { }).catch(async (error: any) => {
+            axios.post(dados.urlWebHook, { meId: dados.idCliente, qrCode: qr , status: "QRCODE" }).then(() => { }).catch(async (error: any) => {
                 await DelSession(dados.idCliente, SESSION_FILE_PATH);
             });
         });

@@ -4,6 +4,7 @@
   "description": "API WhatsApp Web Multi-Session",
   "main": "index.js",
   "scripts": {
+    "build": "tsc --build",
     "start": "ts-node-dev ./src/index.ts"
   },
   "author": "Vitor Salgueiro",
