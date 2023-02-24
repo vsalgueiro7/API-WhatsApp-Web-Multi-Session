@@ -24,7 +24,7 @@ A API estará disponível em http://localhost:3333/.
 **Rota /start**  
 
 * É necessário fornecer o seu idCliente (string) e urlWebHook (string) para retorno do QrCode e informações.
-* Para uma melhor gestão, o idCliente deve ser o número de telefone selecionado no QrCode, no formato 55+DD+numero.
+* Para uma melhor gestão, o idCliente deve ser o número de telefone selecionado no QrCode, no formato DD+numero.
 * A urlWebHook deve estar preparada para receber 4 parâmetros (meId (string), qrCode (string), status (string), msg (objeto)).
 * Ao requisitar a rota /start, serão retornados o meId e o qrCode, até 5 vezes ou até que seja lido com o aplicativo do WhatsApp. .
 * Ao ler o QrCode, será enviado novamente para a urlWebHook os status QRCODE, LOADING, CONNECTED e DISCONNECTED.
