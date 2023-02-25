@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
 import './shared/services/translationsYup';
 import { router } from './routes';
+import path from 'path';
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const server = express();
 server.use(cors({
