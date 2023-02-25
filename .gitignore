@@ -3,3 +3,5 @@ sobre_git.txt
 .env
 /build
 /src/server/controllers/whatsappweb/sessions
+*.zip
+*.rar
